@@ -1,0 +1,23 @@
+name: CD
+on: 
+  push:
+    branches: [main]
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy using SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: 22
+        script: |
+         cd ~/app/myvc/map-pnpm
+         git pull origin main
+         pnpm install
+         pnpm run build
+         pm2 restart FreeMapFido
